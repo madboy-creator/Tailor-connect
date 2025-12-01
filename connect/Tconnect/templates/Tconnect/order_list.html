@@ -1,0 +1,165 @@
+{% extends 'Tconnect/base.html' %}
+
+{% block title %}My Orders - TailorConnect{% endblock %}
+{% block subtitle %}Your Order History{% endblock %}
+
+{% block content %}
+<style>
+    .page-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2d3748;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    .orders-grid {
+        display: grid;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .order-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .order-status {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .status-pending { background: #fef5e7; color: #d69e2e; }
+    .status-confirmed { background: #e6fffa; color: #234e52; }
+    .status-shipped { background: #ebf8ff; color: #1a365d; }
+    .status-delivered { background: #f0fff4; color: #22543d; }
+    .status-cancelled { background: #fed7d7; color: #742a2a; }
+    .order-details {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1rem;
+    }
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .image-placeholder {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+    .order-meta {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .btn-primary {
+        background: #4299e1;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #3182ce;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #718096;
+    }
+    .empty-state h3 {
+        color: #4a5568;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="main-container">
+    <div class="container">
+        <h1 class="page-title">My Orders</h1>
+        
+        {% if orders %}
+        <div class="orders-grid">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <h3>Order #{{ order.id }}</h3>
+                    <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                </div>
+                
+                <div class="order-details">
+                    <div class="product-info">
+                        {% if order.product.image %}
+                        <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="product-image">
+                        {% else %}
+                        <div class="image-placeholder">
+                            <span>Image</span>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4>{{ order.product.name }}</h4>
+                            <p class="price">${{ order.product.price }} each</p>
+                            <p>Quantity: {{ order.quantity }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="order-meta">
+                        <p><strong>Total Price:</strong> ${{ order.total_price }}</p>
+                        <p><strong>Order Date:</strong> {{ order.order_date|date:"F j, Y" }}</p>
+                        <p><strong>Producer:</strong> {{ order.product.producer.name }}</p>
+                        <p><strong>Contact:</strong> {{ order.product.producer.contact_info }}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem; text-align: right;">
+                    <a href="{% url 'order_detail' order.pk %}" class="btn btn-primary">View Order Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+            <a href="{% url 'products_list' %}" class="btn btn-primary" style="margin-top: 1rem;">Browse Products</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

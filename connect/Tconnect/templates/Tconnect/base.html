@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TailorConnect{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #2d3748;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4299e1;
+        }
+        .nav {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .nav a {
+            color: #4a5568;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            white-space: nowrap;
+        }
+        .nav a:hover {
+            color: #4299e1;
+            background: rgba(66, 153, 225, 0.1);
+        }
+        .auth-links {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .auth-links a {
+            background: rgba(66, 153, 225, 0.1);
+            color: #4299e1;
+        }
+        .main-container {
+            background: white;
+            margin: 2rem auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 1200px;
+            min-height: 60vh;
+        }
+        .container {
+            padding: 2rem;
+        }
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+        .alert-info {
+            background: #bee3f8;
+            color: #1a365d;
+            border: 1px solid #90cdf4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🇷🇼 TailorConnect</h1>
+        <p>{% block subtitle %}Connecting Rwandan Producers to Global Markets{% endblock %}</p>
+    </div>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/producers/">Producers</a>
+        
+        <div class="auth-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">👤 Profile</a>
+                <a href="{% url 'order_list' %}">📦 My Orders</a>
+                <a href="{% url 'logout' %}">🚪 Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">🔑 Login</a>
+                <a href="{% url 'register' %}">📝 Register</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="main-container">
+        <div class="container">
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

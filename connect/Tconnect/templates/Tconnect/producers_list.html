@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Producers - TailorConnect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #2d3748;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4299e1;
+        }
+        .nav {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .nav a {
+            color: #4a5568;
+            text-decoration: none;
+            margin: 0 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+        .nav a:hover {
+            color: #4299e1;
+            background: rgba(66, 153, 225, 0.1);
+        }
+        .main-container {
+            background: white;
+            margin: 2rem auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 1200px;
+            min-height: 60vh;
+        }
+        .container {
+            padding: 2rem;
+        }
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d3748;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .producers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .producer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        .producer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #4299e1, #667eea);
+        }
+        .producer-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .producer-card h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .product-count {
+            display: inline-block;
+            background: linear-gradient(135deg, #4299e1, #667eea);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .contact-info {
+            background: #f7fafc;
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #4299e1;
+        }
+        .contact-info p {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .contact-info strong {
+            color: #2d3748;
+        }
+        .bio {
+            color: #718096;
+            font-style: italic;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 3px solid #cbd5e0;
+        }
+        .join-date {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            text-align: right;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #718096;
+            grid-column: 1 / -1;
+        }
+        .empty-state h3 {
+            color: #4a5568;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4299e1, #667eea);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(66, 153, 225, 0.4);
+        }
+        .action-buttons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .view-btn {
+            background: #4299e1;
+            color: white;
+        }
+        .edit-btn {
+            background: #718096;
+            color: white;
+        }
+        .delete-btn {
+            background: #e53e3e;
+            color: white;
+        }
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🇷🇼 TailorConnect</h1>
+        <p>Meet Our Rwandan Producers</p>
+    </div>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/producers/">Producers</a>
+    </div>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="header-actions">
+                <h1 class="page-title">Our Talented Producers</h1>
+                <a href="{% url 'producer_create' %}" class="cta-button">+ Add New Producer</a>
+            </div>
+            
+            <div class="producers-grid">
+                {% for producer in producers %}
+                <div class="producer-card">
+                    <h3>{{ producer.name }}</h3>
+                    <span class="product-count">{{ producer.products.count }} products</span>
+                    
+                    <div class="contact-info">
+                        <p>📍 <strong>Location:</strong> {{ producer.location }}</p>
+                        <p>📧 <strong>Email:</strong> {{ producer.email }}</p>
+                        <p>📞 <strong>Contact:</strong> {{ producer.contact_info }}</p>
+                    </div>
+                    
+                    {% if producer.bio %}
+                    <div class="bio">
+                        <strong>About:</strong> {{ producer.bio }}
+                    </div>
+                    {% endif %}
+
+                    <div class="action-buttons">
+                        <a href="{% url 'producer_detail' producer.pk %}" class="action-btn view-btn">View</a>
+                        <a href="{% url 'producer_update' producer.pk %}" class="action-btn edit-btn">Edit</a>
+                        <a href="{% url 'producer_delete' producer.pk %}" class="action-btn delete-btn">Delete</a>
+                    </div>
+                    
+                    <div class="join-date">
+                        Joined: {{ producer.created_at|date:"F Y" }}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <h3>No producers registered yet</h3>
+                    <p>Add some producers through our website to see them here!</p>
+                    <a href="{% url 'producer_create' %}" class="cta-button">Add Your First Producer</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

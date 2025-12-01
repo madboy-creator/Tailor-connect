@@ -1,0 +1,168 @@
+{% extends 'Tconnect/base.html' %}
+
+{% block title %}My Profile - TailorConnect{% endblock %}
+{% block subtitle %}Manage Your Account{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    .profile-card, .orders-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+    }
+    .profile-card h2, .orders-card h2 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        border-bottom: 3px solid #4299e1;
+        padding-bottom: 0.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #4299e1, #667eea);
+        color: white;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+    }
+    .order-item {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #4299e1;
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .order-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .status-pending { background: #fef5e7; color: #d69e2e; }
+    .status-confirmed { background: #e6fffa; color: #234e52; }
+    .status-shipped { background: #ebf8ff; color: #1a365d; }
+    .status-delivered { background: #f0fff4; color: #22543d; }
+    .empty-orders {
+        text-align: center;
+        padding: 2rem;
+        color: #718096;
+    }
+    .user-info {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="main-container">
+    <div class="container">
+        <h1 class="page-title" style="text-align: center; margin-bottom: 2rem; color: #2d3748;">My Profile</h1>
+        
+        <div class="profile-container">
+            <!-- Profile Information -->
+            <div class="profile-card">
+                <h2>Profile Information</h2>
+                
+                <div class="user-info">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Member since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+                </div>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div style="color: #e53e3e; font-size: 0.875rem; margin-top: 0.25rem;">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+            
+            <!-- Order History -->
+            <div class="orders-card">
+                <h2>Order History</h2>
+                
+                {% if orders %}
+                    {% for order in orders %}
+                    <div class="order-item">
+                        <div class="order-header">
+                            <strong>Order #{{ order.id }}</strong>
+                            <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                        </div>
+                        <p><strong>Product:</strong> {{ order.product.name }}</p>
+                        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                        <p><strong>Total:</strong> ${{ order.total_price }}</p>
+                        <p><strong>Order Date:</strong> {{ order.order_date|date:"M j, Y" }}</p>
+                        <a href="{% url 'order_detail' order.pk %}" style="color: #4299e1; text-decoration: none;">View Details</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-orders">
+                        <h3>No orders yet</h3>
+                        <p>Start shopping to see your orders here!</p>
+                        <a href="{% url 'products_list' %}" class="btn btn-primary" style="margin-top: 1rem;">Browse Products</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

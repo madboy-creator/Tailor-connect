@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete {{ product.name }} - TailorConnect</title>
+    <style>
+        /* Same styles as form template */
+        .delete-warning {
+            background: #fed7d7;
+            border: 2px solid #feb2b2;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .delete-warning h3 {
+            color: #c53030;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🇷🇼 TailorConnect</h1>
+        <p>Delete Product</p>
+    </div>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/producers/">Producers</a>
+        <a href="/admin/">Admin</a>
+    </div>
+
+    <div class="main-container">
+        <div class="container">
+            <h1 class="page-title">Delete Product</h1>
+            
+            <div class="delete-warning">
+                <h3>⚠️ Are you sure you want to delete this product?</h3>
+                <p><strong>{{ product.name }}</strong></p>
+                <p>This action cannot be undone.</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn" style="background: #e53e3e; color: white;">Yes, Delete</button>
+                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

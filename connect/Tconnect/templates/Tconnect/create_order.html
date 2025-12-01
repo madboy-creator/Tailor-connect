@@ -1,0 +1,218 @@
+{% extends 'Tconnect/base.html' %}
+
+{% block title %}Order {{ product.name }} - TailorConnect{% endblock %}
+{% block subtitle %}Place Your Order{% endblock %}
+
+{% block content %}
+<style>
+    .order-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .order-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+    }
+    .product-info {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .product-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    .image-placeholder {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    .product-details h3 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+    }
+    .price {
+        font-size: 1.5rem;
+        color: #4299e1;
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+    .producer {
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    .order-form {
+        margin-top: 1.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .quantity-btn {
+        background: #4299e1;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .quantity-btn:hover {
+        background: #3182ce;
+        transform: scale(1.1);
+    }
+    .quantity-display {
+        font-size: 1.2rem;
+        font-weight: bold;
+        min-width: 50px;
+        text-align: center;
+    }
+    .order-summary {
+        background: #f7fafc;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 1.5rem 0;
+        border-left: 4px solid #4299e1;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #4299e1, #667eea);
+        color: white;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+    }
+    .btn-secondary {
+        background: #718096;
+        color: white;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="main-container">
+    <div class="container">
+        <div class="order-container">
+            <div class="order-card">
+                <div class="product-info">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                    <div class="image-placeholder">
+                        <span>Product Image</span>
+                    </div>
+                    {% endif %}
+                    <div class="product-details">
+                        <h3>{{ product.name }}</h3>
+                        <p class="price">${{ product.price }}</p>
+                        <p class="producer">By {{ product.producer.name }}</p>
+                        <p>{{ product.description }}</p>
+                    </div>
+                </div>
+                
+                <form method="POST" class="order-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <div class="quantity-controls">
+                            <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <span id="quantity-display" class="quantity-display">1</span>
+                            <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+                            <input type="hidden" name="quantity" id="quantity" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h4>Order Summary</h4>
+                        <p>Unit Price: $<span id="unit-price">{{ product.price }}</span></p>
+                        <p>Quantity: <span id="summary-quantity">1</span></p>
+                        <p><strong>Total: $<span id="total-price">{{ product.price }}</span></strong></p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Place Order</button>
+                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let quantity = 1;
+    const unitPrice = "{{ product.price }}";
+    
+    function updateDisplay() {
+        document.getElementById('quantity-display').textContent = quantity;
+        document.getElementById('quantity').value = quantity;
+        document.getElementById('summary-quantity').textContent = quantity;
+        document.getElementById('total-price').textContent = (unitPrice * quantity).toFixed(2);
+    }
+    
+    function increaseQuantity() {
+        quantity++;
+        updateDisplay();
+    }
+    
+    function decreaseQuantity() {
+        if (quantity > 1) {
+            quantity--;
+            updateDisplay();
+        }
+    }
+    
+    // Initialize display
+    updateDisplay();
+</script>
+{% endblock %}

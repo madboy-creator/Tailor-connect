@@ -1,0 +1,178 @@
+{% extends 'Tconnect/base.html' %}
+
+{% block title %}Order #{{ order.id }} - TailorConnect{% endblock %}
+{% block subtitle %}Order Details{% endblock %}
+
+{% block content %}
+<style>
+    .order-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .order-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 2rem;
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #4299e1;
+    }
+    .order-status {
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .status-pending { background: #fef5e7; color: #d69e2e; }
+    .status-confirmed { background: #e6fffa; color: #234e52; }
+    .status-shipped { background: #ebf8ff; color: #1a365d; }
+    .status-delivered { background: #f0fff4; color: #22543d; }
+    .status-cancelled { background: #fed7d7; color: #742a2a; }
+    .order-sections {
+        display: grid;
+        gap: 2rem;
+    }
+    .section {
+        background: #f7fafc;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #4299e1;
+    }
+    .section h3 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    .product-info {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    .product-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    .image-placeholder {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    .product-details h4 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+    }
+    .price {
+        font-size: 1.5rem;
+        color: #4299e1;
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-right: 1rem;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #4299e1, #667eea);
+        color: white;
+    }
+    .btn-secondary {
+        background: #718096;
+        color: white;
+    }
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .action-buttons {
+        text-align: center;
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="main-container">
+    <div class="container">
+        <div class="order-detail-container">
+            <div class="order-card">
+                <div class="order-header">
+                    <h2>Order #{{ order.id }}</h2>
+                    <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                </div>
+                
+                <div class="order-sections">
+                    <!-- Product Information -->
+                    <div class="section">
+                        <h3>Product Information</h3>
+                        <div class="product-info">
+                            {% if order.product.image %}
+                            <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="product-image">
+                            {% else %}
+                            <div class="image-placeholder">
+                                <span>Product Image</span>
+                            </div>
+                            {% endif %}
+                            <div class="product-details">
+                                <h4>{{ order.product.name }}</h4>
+                                <p>{{ order.product.description }}</p>
+                                <p class="price">${{ order.product.price }} each</p>
+                                <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                                <p><strong>Rarity:</strong> {{ order.product.get_rarity_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Producer Information -->
+                    <div class="section">
+                        <h3>Producer Information</h3>
+                        <p><strong>Name:</strong> {{ order.product.producer.name }}</p>
+                        <p><strong>Location:</strong> {{ order.product.producer.location }}</p>
+                        <p><strong>Email:</strong> {{ order.product.producer.email }}</p>
+                        <p><strong>Contact:</strong> {{ order.product.producer.contact_info }}</p>
+                        {% if order.product.producer.bio %}
+                        <p><strong>About:</strong> {{ order.product.producer.bio }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="section">
+                        <h3>Order Summary</h3>
+                        <p><strong>Unit Price:</strong> ${{ order.product.price }}</p>
+                        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                        <p><strong>Total Price:</strong> ${{ order.total_price }}</p>
+                        <p><strong>Order Date:</strong> {{ order.order_date|date:"F j, Y g:i A" }}</p>
+                        <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{% url 'order_list' %}" class="btn btn-secondary">Back to Orders</a>
+                    <a href="{% url 'products_list' %}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

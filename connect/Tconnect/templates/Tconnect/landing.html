@@ -1,0 +1,206 @@
+{% extends 'Tconnect/base.html' %}
+
+{% block title %}TailorConnect - Rwandan Products to World{% endblock %}
+{% block subtitle %}Connecting Rwandan Artisans to Global Markets{% endblock %}
+
+{% block content %}
+<style>
+    .hero {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                    url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 5rem 1rem;
+    }
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 3rem 0;
+        flex-wrap: wrap;
+    }
+    .stat-item {
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+        min-width: 150px;
+    }
+    .stat-item h3 {
+        font-size: 2rem;
+        color: #e53e3e;
+        margin-bottom: 0.5rem;
+    }
+    .section-title {
+        text-align: center;
+        margin: 3rem 0 2rem 0;
+        color: #2d3748;
+    }
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e2e8f0;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+    .product-card h3 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    .price {
+        font-weight: bold;
+        color: #e53e3e;
+        font-size: 1.3rem;
+        margin: 0.5rem 0;
+    }
+    .producer {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    .rarity {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        background: #fed7d7;
+        color: #c53030;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .cta-button {
+        display: inline-block;
+        background: #e53e3e;
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: background 0.3s ease;
+    }
+    .cta-button:hover {
+        background: #c53030;
+    }
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        background: #f7fafc;
+    }
+    .image-placeholder {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    .order-btn {
+        display: inline-block;
+        background: #4299e1;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    .order-btn:hover {
+        background: #3182ce;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="main-container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Discover Authentic Rwandan Craftsmanship</h1>
+        <p>Handcrafted with tradition, delivered to the world. Support local artisans and own a piece of Rwanda's heritage.</p>
+        <a href="/products/" class="cta-button">Explore Products</a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats">
+        <div class="stat-item">
+            <h3>{{ producers_count }}+</h3>
+            <p>Local Artisans</p>
+        </div>
+        <div class="stat-item">
+            <h3>{{ products_count }}+</h3>
+            <p>Unique Products</p>
+        </div>
+        <div class="stat-item">
+            <h3>🌍</h3>
+            <p>Global Delivery</p>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    <h2 class="section-title">Featured Products</h2>
+    <div class="products-grid">
+        {% for product in featured_products %}
+        <div class="product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+            <div class="image-placeholder">
+                <span>🇷🇼<br>Image Coming Soon</span>
+            </div>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p class="price">${{ product.price }}</p>
+            <p>{{ product.description|truncatewords:15 }}</p>
+            <p class="producer">Crafted by {{ product.producer.name }}</p>
+            <span class="rarity">{{ product.get_rarity_display }}</span>
+            
+            {% if user.is_authenticated %}
+            <a href="{% url 'create_order' product.id %}" class="order-btn">Order Now</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="order-btn">Login to Order</a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <h3>No products available yet</h3>
+            <p>Be the first to add products through our admin panel!</p>
+            <a href="/admin/" class="cta-button">Add Products</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
